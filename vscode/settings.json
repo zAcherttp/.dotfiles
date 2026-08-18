@@ -1,0 +1,9 @@
+{
+    "workbench.startupEditor": "none",
+    "workbench.colorTheme": "One Dark Pro Monokai Darker",
+    "workbench.experimental.modernUI": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "terminal.integrated.fontFamily": "SFMono Nerd Font"
+}

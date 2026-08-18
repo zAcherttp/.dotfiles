@@ -1,0 +1,59 @@
+# ~/.config/iris/theme.toml
+# Iris Emerald Branch Theme (derived from RGB: 86, 185, 127 -> #56b97f)
+
+# overlay border color (base branch green)
+border = "#56b97f"
+
+# accent color for selected marker and icon
+accent = "#56b97f"
+
+# muted color for unselected icons (soft sage)
+muted = "#4d735f"
+
+# default text color
+text = "#ffffff"
+
+# text color when selected
+text_sel = "#ffffff"
+
+# footer shortcut key color
+key = "#56b97f"
+
+# matched text color (vibrant lighter green tint for sharp contrast)
+match = "#7ae3a4"
+
+# description text color (slate sage)
+desc = "#7ba38f"
+
+# description text color when selected
+desc_sel = "#e0f5eb"
+
+# selected row background (deep forest green)
+sel_bg = "#163526"
+
+# selected tag pill text color (dark forest tone for readable contrast on green pill)
+sel_text = "#0e2118"
+
+# scroll counter color
+scroll_info = "#56b97f"
+
+# inline ghost text color
+ghost_text = "#436352"
+
+# "system" tag background color
+sys = "#12271d"
+
+# "system" tag selected background color
+sys_sel = "#56b97f"
+
+# "history" tag background color
+hist = "#0f2e21"
+
+# "history" tag selected background color
+hist_sel = "#7ae3a4"
+
+# "alias" tag background color
+alias = "#152d21"
+
+# "alias" tag selected background color (and alias word color)
+alias_sel = "#56b97f"
