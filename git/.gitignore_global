@@ -1,0 +1,15 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+Thumbs.db
+*.swp
+*.swo
+*~
+*.bak
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

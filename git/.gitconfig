@@ -1,0 +1,25 @@
+# ~/.gitconfig
+# Global Git configuration (version controlled)
+
+[include]
+    path = ~/.gitconfig.local
+
+[core]
+    editor = code --wait
+    autocrlf = input
+    excludesfile = ~/.gitignore_global
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[pager]
+    branch = false
+
+[diff]
+    colorMoved = default
+
+[color]
+    ui = auto
