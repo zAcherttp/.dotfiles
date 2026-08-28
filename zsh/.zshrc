@@ -1,5 +1,9 @@
-# Iris Autocomplete
-eval "$(iris init zsh)"
+# Iris Autocomplete — every interactive terminal except agent shells.
+# `iris init` already self-guards on `[[ -o interactive ]] && [ -t 0 ]`, so
+# scripts, cron and non-tty tool shells never start it. The one context that
+# slips through is Claude Code, which runs an interactive pty and inherits
+# TERM_PROGRAM from whatever launched it — hence the CLAUDECODE denylist.
+[[ -z "$CLAUDECODE" ]] && eval "$(iris init zsh)"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
@@ -126,3 +130,11 @@ esac
 if [[ -f "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="$HOME/.local/bin:$PATH"
+
+# sentry
+fpath=("/Users/phat/.local/share/zsh/site-functions" $fpath)
