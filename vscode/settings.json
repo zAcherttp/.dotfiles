@@ -5,5 +5,6 @@
     "workbench.iconTheme": "material-icon-theme",
     "git.confirmSync": false,
     "git.autofetch": true,
-    "terminal.integrated.fontFamily": "SFMono Nerd Font"
+    "terminal.integrated.fontFamily": "SFMono Nerd Font",
+    "lldb.suppressUpdateNotifications": true
 }
