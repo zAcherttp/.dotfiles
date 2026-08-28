@@ -132,8 +132,16 @@ if [[ -f "$HOME/.zshrc.local" ]]; then
 fi
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# `--no-use` skips nvm's auto-activation, which costs ~1.4s at every shell
+# start. The default version goes on PATH directly instead; `nvm use` still
+# works for switching.
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+if [[ -r "$NVM_DIR/alias/default" ]]; then
+  _nvm_def=("$NVM_DIR/versions/node/v${$(<$NVM_DIR/alias/default)#v}"*(N/))
+  (( $#_nvm_def )) && path=("${_nvm_def[-1]}/bin" $path)
+  unset _nvm_def
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # sentry
