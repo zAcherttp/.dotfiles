@@ -43,6 +43,7 @@ fi
 # 2. Symlinks
 echo "🔗 Symlinking configurations..."
 link_file "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+link_file "$DOTFILES_DIR/zsh/.zprofile" "$HOME/.zprofile"
 link_file "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
 link_file "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
 link_file "$DOTFILES_DIR/iris/config.toml" "$HOME/.config/iris/config.toml"
