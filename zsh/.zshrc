@@ -131,16 +131,13 @@ if [[ -f "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
 
-export NVM_DIR="$HOME/.nvm"
-# `--no-use` skips nvm's auto-activation, which costs ~1.4s at every shell
-# start. The default version goes on PATH directly instead; `nvm use` still
-# works for switching.
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-if [[ -r "$NVM_DIR/alias/default" ]]; then
-  _nvm_def=("$NVM_DIR/versions/node/v${$(<$NVM_DIR/alias/default)#v}"*(N/))
-  (( $#_nvm_def )) && path=("${_nvm_def[-1]}/bin" $path)
-  unset _nvm_def
+# fnm replaces nvm, which cost ~1.4s at every shell start and needed a
+# hand-rolled glob over alias/default to avoid paying it. That glob silently
+# resolved a stale `2` alias to the highest v2* match, so the default drifted
+# to 24 while every .nvmrc here pins 22. `--use-on-cd` does the switching for
+# real, which the nvm setup never did at all.
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
 fi
 export PATH="$HOME/.local/bin:$PATH"
 

@@ -3,10 +3,10 @@ tap "versenilvis/iris"
 brew "bun"
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
+# Fast Node.js version manager; owns every node install (see zsh/.zshrc)
+brew "fnm"
 # Command-line benchmarking tool
 brew "hyperfine"
-# Open-source, cross-platform JavaScript runtime environment
-brew "node@24", link: true
 # Fast, disk space efficient package manager
 brew "pnpm"
 # Program that allows you to count code, quickly
