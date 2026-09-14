@@ -6,5 +6,7 @@
     "git.confirmSync": false,
     "git.autofetch": true,
     "terminal.integrated.fontFamily": "SFMono Nerd Font",
-    "lldb.suppressUpdateNotifications": true
+    "lldb.suppressUpdateNotifications": true,
+    "security.promptForLocalFileProtocolHandling": false,
+    "githubPullRequests.pullBranch": "never"
 }
