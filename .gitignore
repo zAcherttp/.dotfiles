@@ -2,3 +2,8 @@
 *.swp
 *.bak*
 .history/
+
+# Key material is per-machine and never committed. ssh/config names the
+# keys it expects; install.sh does not create them.
+ssh/*
+!ssh/config

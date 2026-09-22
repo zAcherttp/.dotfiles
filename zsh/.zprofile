@@ -23,3 +23,14 @@ fi
 if [ -d "$HOME/.docker/bin" ]; then
   export PATH="$PATH:$HOME/.docker/bin"
 fi
+
+# ------------------------------------------------------------------------------
+# Local Configuration (Ignored from version control)
+# ------------------------------------------------------------------------------
+# Machine-specific login-shell setup goes in ~/.zprofile.local. It has to be a
+# separate file from ~/.zshrc.local: .zshrc is not read by non-interactive login
+# shells (LaunchAgents, cron, `ssh host cmd`), which is the case this file
+# exists to serve. Anything a cron job needs on PATH belongs here, not there.
+if [ -f "$HOME/.zprofile.local" ]; then
+  . "$HOME/.zprofile.local"
+fi

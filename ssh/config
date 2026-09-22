@@ -1,0 +1,29 @@
+# ~/.ssh/config
+# Machine-specific and identifying hosts -- internal servers, jump boxes, work
+# accounts -- go in ~/.ssh/config.local, which is not in this public repo. ssh
+# takes the first value it finds for an option, so the include sits at the top
+# and local entries win.
+Include ~/.ssh/config.local
+
+# One host alias per GitHub account, each pinned to its own key. The Host line
+# is a nickname, not a real server: it still connects to github.com, but picks
+# that account's key. Which identity a repo uses then lives in its remote URL,
+# so nothing global has to be switched and no `gh auth switch` is involved:
+#
+#     git remote set-url origin git@github-zacherttp:owner/repo.git
+#
+# Keys are per-machine and never committed. To set one up:
+#     ssh-keygen -t ed25519 -C github-zacherttp -f ~/.ssh/github-zacherttp
+# add the .pub at https://github.com/settings/keys, then check it with
+#     ssh -T git@github-zacherttp
+#
+# Additional accounts follow the same four lines, but belong in config.local
+# rather than here -- an alias names the account, and that is the owner's to
+# disclose, not this repo's.
+
+Host github-zacherttp
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/github-zacherttp
+    # Use only this key, instead of offering every key the agent holds.
+    IdentitiesOnly yes
