@@ -141,5 +141,6 @@ if command -v fnm >/dev/null 2>&1; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 
-# sentry
-fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+# sentry. Added by sentry-cli, which writes an absolute path; kept relative to
+# $HOME so the file survives a machine with a different username.
+fpath=("${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions" $fpath)
