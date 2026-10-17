@@ -1,0 +1,6 @@
+# ~/.bunfig.toml (global bun config)
+# Keep bun's install cache on the dev volume, next to the projects, so
+# installs can clone from it instead of copying across volumes.
+# See scripts/dev-volume.sh.
+[install.cache]
+dir = "/Volumes/dev/.cache/bun"

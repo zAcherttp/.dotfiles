@@ -1,0 +1,5 @@
+# ~/.config/uv/uv.toml
+# Keep uv's cache on the dev volume, next to the projects, so installs can
+# clone/hard-link from it instead of copying across volumes.
+# See scripts/dev-volume.sh.
+cache-dir = "/Volumes/dev/.cache/uv"

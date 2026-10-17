@@ -54,6 +54,8 @@ link_file "$DOTFILES_DIR/iris/theme.toml" "$HOME/.config/iris/theme.toml"
 link_file "$DOTFILES_DIR/iterm2/VSCodeDark.itermcolors" "$HOME/.config/iterm2/VSCodeDark.itermcolors"
 link_file "$DOTFILES_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
 link_file "$DOTFILES_DIR/zed/settings.json" "$HOME/.config/zed/settings.json"
+link_file "$DOTFILES_DIR/uv/uv.toml" "$HOME/.config/uv/uv.toml"
+link_file "$DOTFILES_DIR/bun/.bunfig.toml" "$HOME/.bunfig.toml"
 
 # Create local templates if not existing
 if [ ! -f "$HOME/.zshrc.local" ]; then
@@ -168,6 +170,14 @@ fi
 if [ "$1" = "--macos" ] || [ "$1" = "-m" ] || [ "$1" = "--all" ]; then
     echo "⚙️  Running macOS system optimizations..."
     "$DOTFILES_DIR/scripts/macos.sh"
+fi
+
+# 6. Optional dev volume (interactive: asks for sudo and a passphrase)
+if [ "$1" = "--dev-volume" ]; then
+    echo "💽 Setting up the dev volume..."
+    "$DOTFILES_DIR/scripts/dev-volume.sh"
+elif [ ! -L "$HOME/dev" ]; then
+    echo "💡 Tip: Run './install.sh --dev-volume' to move ~/dev onto an unindexed volume."
 fi
 
 echo ""
