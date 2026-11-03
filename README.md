@@ -33,6 +33,7 @@ Personal terminal configuration, themes, fonts, and developer ergonomics for mac
 └── scripts/
     ├── sync_iterm_colors.py    # iTerm2 color palette sync tool
     ├── macos.sh                # macOS UI & key repeat defaults script
+    ├── file-associations.swift # Default apps per file type (Zed, IINA, Roblox Studio)
     └── dev-volume.sh           # ~/dev on an encrypted, unindexed volume
 ```
 

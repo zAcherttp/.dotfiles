@@ -131,6 +131,25 @@ if [[ -f "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
 
+# gh account by folder, as ~/.gitconfig.local picks the git identity. The
+# default gh config is the work account, because apps that shell out to gh
+# never cd; folders under GH_PERSONAL_ROOTS but outside GH_WORK_ROOTS switch
+# to GH_PERSONAL_CONFIG_DIR. All three are set in ~/.zshrc.local.
+_gh_account_for_pwd() {
+  [[ -n "$GH_PERSONAL_CONFIG_DIR" ]] || return 0
+  local root
+  for root in ${=GH_WORK_ROOTS}; do
+    if [[ "$PWD/" == "$root/"* ]]; then unset GH_CONFIG_DIR; return 0; fi
+  done
+  for root in ${=GH_PERSONAL_ROOTS}; do
+    if [[ "$PWD/" == "$root/"* ]]; then export GH_CONFIG_DIR="$GH_PERSONAL_CONFIG_DIR"; return 0; fi
+  done
+  unset GH_CONFIG_DIR
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd _gh_account_for_pwd
+_gh_account_for_pwd
+
 # fnm replaces nvm, which cost ~1.4s at every shell start and needed a
 # hand-rolled glob over alias/default to avoid paying it. That glob silently
 # resolved a stale `2` alias to the highest v2* match, so the default drifted

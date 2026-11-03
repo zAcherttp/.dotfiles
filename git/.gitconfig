@@ -9,7 +9,6 @@
     autocrlf = input
     excludesfile = ~/.gitignore_global
     # Ask a per-repo watcher what changed instead of rescanning the tree.
-    fsmonitor = true
     untrackedCache = true
 
 [init]

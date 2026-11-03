@@ -170,6 +170,8 @@ fi
 if [ "$1" = "--macos" ] || [ "$1" = "-m" ] || [ "$1" = "--all" ]; then
     echo "⚙️  Running macOS system optimizations..."
     "$DOTFILES_DIR/scripts/macos.sh"
+    echo "📂 Setting default apps for file types..."
+    swift "$DOTFILES_DIR/scripts/file-associations.swift"
 fi
 
 # 6. Optional dev volume (interactive: asks for sudo and a passphrase)
