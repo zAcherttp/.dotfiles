@@ -1,22 +1,31 @@
 #Requires -Version 7.2
 <#
 .SYNOPSIS
-    Windows installer: points the PowerShell 7 profile at this repo.
+    Windows installer: PowerShell 7 profile, Windows Terminal look, fonts.
 
 .DESCRIPTION
-    Idempotent. Replaces Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-    with a one-line stub that dot-sources powershell/ from this repo, backing up
-    whatever was there first. Writes a commented ~/.pwsh.local.ps1 template the
-    first time; never overwrites one that exists.
+    Idempotent.
+    - Replaces Documents\PowerShell\Microsoft.PowerShell_profile.ps1 with a
+      one-line stub that dot-sources powershell/ from this repo, backing up
+      whatever was there first.
+    - Writes a commented ~/.pwsh.local.ps1 template the first time; never
+      overwrites one that exists.
+    - Installs windows-terminal/dotfiles.json as a Windows Terminal fragment
+      (VS Code Dark colours and SFMono on the PowerShell profile). Fragments
+      add to settings.json without editing it; settings.json still wins.
+    - Installs fonts/ for the current user if no SFMono font is present.
 
 .EXAMPLE
-    ./install.ps1           # profile only
-    ./install.ps1 -Tools    # also install oh-my-posh, zoxide and Terminal-Icons
+    ./install.ps1           # profile, terminal fragment, fonts
+    ./install.ps1 -Tools    # also install zoxide (and Terminal-Icons, opt-in in the profile)
+    ./install.ps1 -Tune     # also turn off pwsh's telemetry and update check (~30 ms per start)
 #>
 [CmdletBinding()]
-param([switch]$Tools)
+param([switch]$Tools, [switch]$Tune)
 
 $ErrorActionPreference = 'Stop'
+
+# Profile
 $source = Join-Path $PSScriptRoot 'powershell\Microsoft.PowerShell_profile.ps1'
 $target = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Microsoft.PowerShell_profile.ps1'
 $stub = @"
@@ -46,20 +55,49 @@ if (-not (Test-Path $local)) {
 # $ProfileMode is 'full' in an interactive terminal and 'lite' in scripts and agents.
 #
 # $env:PATH = "$HOME\bin;$env:PATH"
-# $env:POSH_THEME = "$HOME\my-theme.omp.json"
-# if ($ProfileMode -eq 'full') { Set-Alias -Name vim -Value nvim }
+# $env:DEFAULT_USER = $env:USERNAME          # hide the ✝ segment, as on oh-my-zsh
+# $ProfileIcons = $true                      # Terminal-Icons in ls (~0.5 s on the first ls)
 '@
     Write-Host "local     template written: $local"
 }
 
-if ($Tools) {
-    foreach ($id in 'JanDeDobbeleer.OhMyPosh', 'ajeetdsouza.zoxide') {
-        winget install --id $id --exact --source winget --accept-package-agreements --silent
+# Windows Terminal fragment
+$fragmentDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows Terminal\Fragments\dotfiles'
+New-Item -ItemType Directory -Force $fragmentDir | Out-Null
+Copy-Item (Join-Path $PSScriptRoot 'windows-terminal\dotfiles.json') $fragmentDir -Force
+Write-Host "terminal  fragment installed: $fragmentDir (restart Windows Terminal)"
+
+# Fonts, per user, only when no SFMono is installed
+$fontKey = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
+$installed = @((Get-ItemProperty $fontKey -ErrorAction Ignore).PSObject.Properties.Name) +
+             @((Get-ItemProperty 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts').PSObject.Properties.Name)
+if (-not ($installed -match 'SF ?Mono')) {
+    $fontDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
+    New-Item -ItemType Directory -Force $fontDir | Out-Null
+    if (-not (Test-Path $fontKey)) { New-Item $fontKey -Force | Out-Null }
+    foreach ($font in Get-ChildItem (Join-Path $PSScriptRoot 'fonts') -Filter *.otf) {
+        $dest = Join-Path $fontDir $font.Name
+        Copy-Item $font.FullName $dest -Force
+        New-ItemProperty $fontKey -Name "$($font.BaseName) (OpenType)" -Value $dest -Force | Out-Null
     }
+    Write-Host "fonts     SFMono installed for this user"
+} else {
+    Write-Host 'fonts     SFMono already installed'
+}
+
+if ($Tools) {
+    winget install --id ajeetdsouza.zoxide --exact --source winget --accept-package-agreements --silent
     if (-not (Get-Module -ListAvailable Terminal-Icons)) {
         Install-Module Terminal-Icons -Scope CurrentUser -Repository PSGallery
     }
-    Write-Host 'tools     installed. The prompt needs a Nerd Font in your terminal (fonts/ has SFMono).'
+    Write-Host 'tools     installed'
+}
+
+if ($Tune) {
+    # Read once at process start, so they only help as user environment variables.
+    [Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'User')
+    [Environment]::SetEnvironmentVariable('POWERSHELL_UPDATECHECK', 'Off', 'User')
+    Write-Host 'tune      telemetry and update check off (user environment; new terminals pick it up)'
 }
 
 Write-Host 'done      open a new terminal.'

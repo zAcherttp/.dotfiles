@@ -1,0 +1,36 @@
+{
+  "$help": "Windows Terminal fragment, installed by install.ps1. Colours from iterm2/VSCodeDark.itermcolors; settings.json still wins where it sets the same key.",
+  "schemes": [
+    {
+      "name": "VS Code Dark",
+      "background": "#1E1E1E",
+      "foreground": "#CCCCCC",
+      "cursorColor": "#FFFFFF",
+      "selectionBackground": "#264F78",
+      "black": "#000000",
+      "red": "#CD3131",
+      "green": "#0DBC79",
+      "yellow": "#E5E510",
+      "blue": "#2472C8",
+      "purple": "#BC3FBC",
+      "cyan": "#11A8CD",
+      "white": "#E5E5E5",
+      "brightBlack": "#666666",
+      "brightRed": "#F14C4C",
+      "brightGreen": "#23D18B",
+      "brightYellow": "#F5F543",
+      "brightBlue": "#3B8EEA",
+      "brightPurple": "#D670D6",
+      "brightCyan": "#29B8DB",
+      "brightWhite": "#FFFFFF"
+    }
+  ],
+  "profiles": [
+    {
+      "updates": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+      "colorScheme": "VS Code Dark",
+      "font": { "face": "Liga SFMono Nerd Font, SFMono Nerd Font, SF Mono, Cascadia Mono NF" },
+      "intenseTextStyle": "bright"
+    }
+  ]
+}

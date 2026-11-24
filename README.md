@@ -56,35 +56,48 @@ cd ~/.dotfiles
 
 ```powershell
 git clone -b windows <your-dotfiles-repo-url> $HOME\.dotfiles
-& $HOME\.dotfiles\install.ps1 -Tools   # -Tools: oh-my-posh, zoxide, Terminal-Icons
+& $HOME\.dotfiles\install.ps1 -Tools -Tune   # -Tools: zoxide; -Tune: no pwsh telemetry/update check
+```
+
+Same look as the Mac: the cobalt2 prompt from oh-my-zsh, VS Code Dark
+colours, SFMono, and the Iris greens on the completion list.
+
+```
+powershell/
+└── Microsoft.PowerShell_profile.ps1   # The profile, prompt included
+windows-terminal/
+└── dotfiles.json                      # Terminal fragment: VS Code Dark + SFMono
+install.ps1                            # Idempotent Windows installer
 ```
 
 `install.ps1` replaces `Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
 with a one-line stub that dot-sources `powershell/` here (the old file is
-backed up next to it), and writes a `~/.pwsh.local.ps1` template for
-machine-specific settings.
+backed up next to it), writes a `~/.pwsh.local.ps1` template for
+machine-specific settings, installs the Windows Terminal fragment, and
+installs `fonts/` if no SFMono is present.
 
-```
-powershell/
-├── Microsoft.PowerShell_profile.ps1   # The profile
-└── cobalt2.omp.json                   # oh-my-posh theme ($env:POSH_THEME overrides)
-install.ps1                            # Idempotent Windows installer
-```
+### Why it is fast
 
-The profile loads each piece only when something needs it:
+| | Cost |
+|---|---|
+| Profile at startup | ~110 ms, of which ~45 ms is PSReadLine loading (pwsh loads it anyway) |
+| Prompt | 1–5 ms, drawn in-process (oh-my-posh took ~100 ms per prompt) |
+| zoxide | ~40 ms on the first idle, from a cached init script |
 
-| When | What loads | Cost |
-|---|---|---|
-| Startup | Functions, aliases, PSReadLine, a plain prompt | ~140 ms, no processes spawned |
-| First idle after the prompt | oh-my-posh, then zoxide, from cached init scripts | ~160 ms, prompt redraws itself |
-| First `ls` / `gci` / `la` / `ll` | Terminal-Icons | ~0.5 s, once |
+- **No prompt engine.** The cobalt2 theme is ported to PowerShell. The branch
+  is read from `.git/HEAD`; `git status` (30–50 ms) runs in the background
+  and the prompt repaints only if green/yellow changed.
+- **No module loads before the first prompt.** A bare pwsh never loads
+  `Microsoft.PowerShell.Utility` or `.Management`; the first `Select-Object`,
+  `Join-Path` or `Register-EngineEvent` costs 20–60 ms to load one. Startup
+  code uses .NET and `$ExecutionContext` instead.
+- **Lite mode.** Shells that only run a command (`pwsh -c`, scripts, coding
+  agents, redirected input) get functions only. Force either mode with
+  `$env:PWSH_PROFILE_MODE = 'full'` or `'lite'`.
+- **Caches** in `%LOCALAPPDATA%\pwsh-profile`, rebuilt when the tool changes.
 
-Init scripts are cached in `%LOCALAPPDATA%\pwsh-profile` and rebuilt when the
-tool's executable or the theme file changes. Shells that only run a command
-(`pwsh -c`, scripts, coding agents, redirected input) get **lite** mode:
-functions only, no prompt, nothing spawned. Force either mode with
-`$env:PWSH_PROFILE_MODE = 'full'` or `'lite'`. `Show-ProfileStatus` shows the
-mode, load times, and anything that failed to load.
+`Show-ProfileStatus` shows the mode, per-phase load times, the last prompt's
+draw time, and anything that failed to load.
 
 ## Dev volume
 
