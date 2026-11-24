@@ -1,6 +1,7 @@
 # Dotfiles
 
 Personal terminal configuration, themes, fonts, and developer ergonomics for macOS.
+The `windows` branch adds a PowerShell 7 setup; see [Windows](#windows).
 
 ## Structure
 ```
@@ -50,6 +51,40 @@ cd ~/.dotfiles
 - `./install.sh --macos`: Applies macOS keyboard repeat rates and Finder tweaks.
 - `./install.sh --all`: Runs symlinks, Brewfile, and macOS system tweaks.
 - `./install.sh --dev-volume`: Moves `~/dev` onto its own volume (see below).
+
+## Windows
+
+```powershell
+git clone -b windows <your-dotfiles-repo-url> $HOME\.dotfiles
+& $HOME\.dotfiles\install.ps1 -Tools   # -Tools: oh-my-posh, zoxide, Terminal-Icons
+```
+
+`install.ps1` replaces `Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
+with a one-line stub that dot-sources `powershell/` here (the old file is
+backed up next to it), and writes a `~/.pwsh.local.ps1` template for
+machine-specific settings.
+
+```
+powershell/
+├── Microsoft.PowerShell_profile.ps1   # The profile
+└── cobalt2.omp.json                   # oh-my-posh theme ($env:POSH_THEME overrides)
+install.ps1                            # Idempotent Windows installer
+```
+
+The profile loads each piece only when something needs it:
+
+| When | What loads | Cost |
+|---|---|---|
+| Startup | Functions, aliases, PSReadLine, a plain prompt | ~140 ms, no processes spawned |
+| First idle after the prompt | oh-my-posh, then zoxide, from cached init scripts | ~160 ms, prompt redraws itself |
+| First `ls` / `gci` / `la` / `ll` | Terminal-Icons | ~0.5 s, once |
+
+Init scripts are cached in `%LOCALAPPDATA%\pwsh-profile` and rebuilt when the
+tool's executable or the theme file changes. Shells that only run a command
+(`pwsh -c`, scripts, coding agents, redirected input) get **lite** mode:
+functions only, no prompt, nothing spawned. Force either mode with
+`$env:PWSH_PROFILE_MODE = 'full'` or `'lite'`. `Show-ProfileStatus` shows the
+mode, load times, and anything that failed to load.
 
 ## Dev volume
 
